@@ -1,35 +1,41 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mshu & Anh Kiet | Sync ??</title>
+    <title>Mshu & Anh Kiet | Love Sync 🤍</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-rose-50 min-h-screen p-4 flex items-center justify-center font-sans">
+
     <div class="max-w-md w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-rose-100">
         <div class="p-8 bg-gradient-to-r from-rose-400 to-pink-500 text-white text-center">
             <h1 class="text-2xl font-bold tracking-widest uppercase">LOVE SYNC</h1>
             <p class="text-sm opacity-90 mt-1 italic">Mshu & Anh Ki&#7879;t's Exclusive Schedule</p>
         </div>
+        
         <div class="p-6">
-            <div id="status" class="text-[10px] text-center mb-4 text-rose-400 font-bold uppercase">Connecting...</div>
-            <table class="w-full text-left">
+            <div id="status" class="text-[10px] text-center mb-4 text-rose-400 font-bold uppercase">Connecting to heart...</div>
+            
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="text-rose-400 text-[10px] uppercase font-bold tracking-widest">
+                    <tr class="text-rose-400 text-[10px] uppercase tracking-[0.2em] font-bold">
                         <th class="py-3">Period</th>
-                        <th class="py-3 text-center">Mshu</th>
-                        <th class="py-3 text-center">AK</th>
+                        <th class="py-3 text-center px-2">Mshu</th>
+                        <th class="py-3 text-center px-2">AK</th>
                     </tr>
                 </thead>
-                <tbody id="schedule-body" class="text-gray-600"></tbody>
+                <tbody id="schedule-body" class="text-gray-600">
+                    </tbody>
             </table>
-            <button type="button" class="w-full mt-8 bg-rose-500 text-white font-bold py-4 rounded-2xl shadow-lg uppercase text-xs tracking-widest">
+
+            <button type="button" class="w-full mt-8 bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-rose-200 active:scale-95 uppercase tracking-widest text-xs">
                 Confirm Our Date
             </button>
         </div>
     </div>
+
     <script>
         const supabaseUrl = 'https://pmwgtnajpoxisedxgqwh.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtd2d0bmFqcG94aXNlZHhncXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzMTYzNzcsImV4cCI6MjA4Mzg5MjM3N30.LJ6u0v6I-Zz-ncJrQ_l_tr1d9yvQy5MxwpdcEIAfSeg';
@@ -37,21 +43,34 @@
 
         async function loadData() {
             const { data, error } = await supabase.from('schedule').select('*').order('id', { ascending: true });
-            if (!error) {
-                document.getElementById('schedule-body').innerHTML = data.map(row => `
+            if (error) {
+                console.error(error);
+            } else {
+                const body = document.getElementById('schedule-body');
+                body.innerHTML = data.map(row => `
                     <tr class="border-t border-rose-50">
                         <td class="py-5 text-sm font-medium">${row.period}</td>
-                        <td class="text-center"><input type="checkbox" ${row.mshu_free ? 'checked' : ''} onclick="updateData(${row.id}, 'mshu_free', this.checked)" class="w-6 h-6 accent-rose-500"></td>
-                        <td class="text-center"><input type="checkbox" ${row.kiet_free ? 'checked' : ''} onclick="updateData(${row.id}, 'kiet_free', this.checked)" class="w-6 h-6 accent-rose-500"></td>
+                        <td class="text-center">
+                            <input type="checkbox" ${row.mshu_free ? 'checked' : ''} 
+                            onclick="updateData(${row.id}, 'mshu_free', this.checked)"
+                            class="w-6 h-6 rounded-full accent-rose-500 cursor-pointer">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" ${row.kiet_free ? 'checked' : ''} 
+                            onclick="updateData(${row.id}, 'kiet_free', this.checked)"
+                            class="w-6 h-6 rounded-full accent-rose-500 cursor-pointer">
+                        </td>
                     </tr>
                 `).join('');
-                document.getElementById('status').innerText = 'Live ??';
+                document.getElementById('status').innerText = 'System Live 🟢';
             }
         }
-        async function updateData(id, col, val) {
-            await supabase.from('schedule').update({ [col]: val }).eq('id', id);
+
+        async function updateData(id, column, value) {
+            await supabase.from('schedule').update({ [column]: value }).eq('id', id);
             loadData();
         }
+
         loadData();
         setInterval(loadData, 5000);
     </script>
